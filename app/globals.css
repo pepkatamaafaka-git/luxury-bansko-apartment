@@ -1,0 +1,389 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─────────────────────────────────────────────
+   WINTER THEME — crisp, light, alpine
+───────────────────────────────────────────── */
+:root {
+  /* Core palette — light winter */
+  --background:         oklch(0.97 0.012 220);   /* icy light blue-white */
+  --foreground:         oklch(0.14 0.025 240);   /* deep navy text */
+  --card:               oklch(0.99 0.006 215);   /* near-white card */
+  --card-foreground:    oklch(0.14 0.025 240);
+  --popover:            oklch(0.99 0.006 215);
+  --popover-foreground: oklch(0.14 0.025 240);
+
+  /* Brand */
+  --primary:            oklch(0.45 0.14 235);    /* deep glacial blue */
+  --primary-foreground: oklch(0.97 0.005 215);
+  --secondary:          oklch(0.90 0.025 220);
+  --secondary-foreground: oklch(0.18 0.025 240);
+  --muted:              oklch(0.92 0.018 220);
+  --muted-foreground:   oklch(0.48 0.025 230);
+
+  /* Accent = deep slate-teal (replaces orange) */
+  --accent:             oklch(0.40 0.15 215);    /* rich ice-teal */
+  --accent-foreground:  oklch(0.97 0.005 215);
+
+  /* Utility */
+  --destructive:        oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.97 0 0);
+  --border:             oklch(0.86 0.022 220);
+  --input:              oklch(0.90 0.018 220);
+  --ring:               oklch(0.45 0.14 235);
+  --radius:             0.75rem;
+
+  /* Season tokens */
+  --season-hero-from:   oklch(0.92 0.03 220);
+  --season-hero-to:     oklch(0.82 0.05 215);
+  --season-particle:    oklch(0.95 0.01 215);
+  --season-glow:        oklch(0.45 0.14 235 / 0.28);
+  --season-glass-bg:    oklch(0.99 0.008 215 / 0.72);
+  --season-glass-border: oklch(0.60 0.08 225 / 0.20);
+  --nav-bg:             oklch(0.97 0.012 220 / 0.88);
+
+  /* Hero overlay */
+  --hero-overlay-start: rgba(220,237,250,0.15);
+  --hero-overlay-end:   rgba(230,243,255,0.75);
+}
+
+/* ─────────────────────────────────────────────
+   SUMMER THEME — warm, bright, mountain
+───────────────────────────────────────────── */
+.summer {
+  --background:         oklch(0.97 0.018 88);    /* warm sunlit ivory */
+  --foreground:         oklch(0.16 0.025 45);    /* rich earth brown */
+  --card:               oklch(1 0.010 80);
+  --card-foreground:    oklch(0.16 0.025 45);
+  --popover:            oklch(1 0.010 80);
+  --popover-foreground: oklch(0.16 0.025 45);
+
+  --primary:            oklch(0.38 0.15 148);    /* Pirin deep forest green */
+  --primary-foreground: oklch(0.97 0.005 90);
+  --secondary:          oklch(0.92 0.030 88);
+  --secondary-foreground: oklch(0.20 0.025 50);
+  --muted:              oklch(0.93 0.022 82);
+  --muted-foreground:   oklch(0.46 0.040 65);
+
+  /* Accent = warm forest green (replaces terracotta) */
+  --accent:             oklch(0.38 0.15 148);
+  --accent-foreground:  oklch(0.97 0.005 90);
+
+  --destructive:        oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.97 0 0);
+  --border:             oklch(0.87 0.030 82);
+  --input:              oklch(0.90 0.025 82);
+  --ring:               oklch(0.38 0.15 148);
+  --radius:             0.75rem;
+
+  --season-hero-from:   oklch(0.90 0.05 90);
+  --season-hero-to:     oklch(0.75 0.08 148);
+  --season-particle:    oklch(0.88 0.10 88);
+  --season-glow:        oklch(0.38 0.15 148 / 0.25);
+  --season-glass-bg:    oklch(1 0.010 80 / 0.72);
+  --season-glass-border: oklch(0.38 0.15 148 / 0.18);
+  --nav-bg:             oklch(0.97 0.018 88 / 0.90);
+
+  --hero-overlay-start: rgba(230,245,215,0.12);
+  --hero-overlay-end:   rgba(240,250,225,0.72);
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 8px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-serif), Georgia, serif;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* ─── Glass morphism ──────────────────────── */
+.glass {
+  background: var(--season-glass-bg);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid var(--season-glass-border);
+}
+
+/* ─── Scroll reveal ───────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.75s cubic-bezier(0.22,1,0.36,1),
+              transform 0.75s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ─── Hover tilt card ─────────────────────── */
+.tilt-card {
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+.tilt-card:hover {
+  transform: perspective(800px) rotateX(2deg) rotateY(-2deg) scale(1.02);
+  box-shadow: 0 32px 80px oklch(0 0 0 / 0.12);
+}
+
+/* ─── CTA glow — stronger gradients ──────── */
+.cta-glow {
+  box-shadow: 0 0 0 0 var(--season-glow);
+  transition: box-shadow 0.4s ease, transform 0.2s ease;
+}
+.cta-glow:hover {
+  box-shadow: 0 0 0 8px transparent,
+              0 6px 28px var(--season-glow),
+              0 2px 8px oklch(0 0 0 / 0.12);
+  transform: translateY(-1px);
+}
+
+/* ─── Gradient button style ───────────────── */
+.btn-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, oklch(from var(--primary) calc(l - 0.08) calc(c + 0.04) calc(h + 12)) 100%);
+  color: var(--primary-foreground);
+  box-shadow: 0 4px 20px var(--season-glow), 0 1px 3px oklch(0 0 0 / 0.15);
+  transition: filter 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-gradient:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 32px var(--season-glow), 0 2px 6px oklch(0 0 0 / 0.18);
+}
+
+/* ─── Decorative SVG mountain BG ──────────── */
+.bg-mountains {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.bg-mountains svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+/* ─── Snowflake float animations ──────────── */
+@keyframes snowDrift {
+  0%   { transform: translateY(-10px) translateX(0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 0.7; }
+  90%  { opacity: 0.5; }
+  100% { transform: translateY(110vh) translateX(40px) rotate(360deg); opacity: 0; }
+}
+@keyframes pollenDrift {
+  0%   { transform: translateY(110vh) translateX(0) scale(0.8); opacity: 0; }
+  10%  { opacity: 0.5; }
+  90%  { opacity: 0.4; }
+  100% { transform: translateY(-10px) translateX(30px) scale(1.1); opacity: 0; }
+}
+.snow-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: oklch(0.95 0.02 215);
+  animation: snowDrift linear infinite;
+  pointer-events: none;
+}
+.pollen-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: oklch(0.80 0.12 88);
+  animation: pollenDrift linear infinite;
+  pointer-events: none;
+}
+
+/* ─── Gradient section divider ────────────── */
+.gradient-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--primary), transparent);
+  opacity: 0.3;
+}
+
+/* ─── Card gradient border ────────────────── */
+.card-gradient-border {
+  position: relative;
+}
+.card-gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(135deg, var(--primary), oklch(from var(--primary) calc(l + 0.2) calc(c - 0.05) h), transparent);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0.5;
+}
+
+/* ─── Marquee ticker ──────────────────────── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee 24s linear infinite;
+  white-space: nowrap;
+}
+
+/* ─── Season transition ───────────────────── */
+body, .season-transition {
+  transition: background-color 0.7s ease, color 0.7s ease;
+}
+
+/* ─── Scrollbar ───────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 99px; }
+
+/* ─── Page transition ─────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px) scale(0.99); }
+  to   { opacity: 1; transform: none; }
+}
+.page-enter {
+  animation: fadeUp 0.55s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+/* ─── Hero gradient overlays (light-themed) ── */
+.hero-overlay-bottom {
+  background: linear-gradient(
+    to bottom,
+    var(--hero-overlay-start) 0%,
+    transparent 40%,
+    var(--hero-overlay-end) 100%
+  );
+}
+.hero-overlay-side {
+  background: linear-gradient(
+    to right,
+    var(--hero-overlay-end) 0%,
+    transparent 50%,
+    rgba(0,0,0,0) 100%
+  );
+}
+
+/* ─── Animated counter ────────────────────── */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.count-animate {
+  animation: countUp 0.6s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+/* ─── Navbar link underline ───────────────── */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: var(--primary);
+  transition: width 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* ─── Season pill button ──────────────────── */
+.season-btn {
+  position: relative;
+  overflow: hidden;
+}
+.season-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--primary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+}
+.season-btn:hover::before {
+  opacity: 0.08;
+}
+
+/* ─── Section divider line ────────────────── */
+.section-line {
+  width: 3rem;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 99px;
+}
+
+/* ─── Floating card animation ─────────────── */
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+.float-anim {
+  animation: floatY 4s ease-in-out infinite;
+}
+
+/* ─── Tag/badge pill ──────────────────────── */
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border-radius: 99px;
+}
+
+/* ─── Activity card hover ─────────────────── */
+.activity-card {
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
+}
+.activity-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 24px 60px oklch(0 0 0 / 0.10);
+}
