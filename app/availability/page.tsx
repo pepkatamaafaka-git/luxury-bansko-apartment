@@ -138,7 +138,7 @@ function Calendar({
 
       {/* Days grid — no hover state, pure CSS hover */}
       <div className="grid grid-cols-7">
-        {Array.from({ length: firstDow }).map((_, i) => <div key={`e-${i}`} />)}
+        {Array.from({ length: firstDow }).map((_, i) => <div key={`e-${i}`} className="h-10" />)}
         {Array.from({ length: daysInMonth }).map((_, i) => {
           const day = i + 1
           const s = dayStatuses[day]
@@ -149,46 +149,21 @@ function Calendar({
           const isPast     = s === 'past'
           const isAvail    = s === 'available'
 
-          // Range background spans full cell width; dot/circle sits inside
           return (
             <div
               key={day}
               className={[
-                'relative h-10 flex items-center justify-center',
-                // full-width range background (no gap between cells)
-                inRange  ? 'bg-primary/10' : '',
-                // half-width range bg on start (right half) and end (left half)
-                isStart  ? 'bg-gradient-to-l from-primary/10 from-50% to-transparent to-50%' : '',
-                isEnd    ? 'bg-gradient-to-r from-primary/10 from-50% to-transparent to-50%' : '',
+                'h-10 flex items-center justify-center text-sm font-medium select-none transition-colors',
+                isStart    ? 'bg-primary text-primary-foreground font-bold cursor-pointer rounded-l-xl' : '',
+                isEnd      ? 'bg-primary text-primary-foreground font-bold cursor-pointer rounded-r-xl' : '',
+                inRange    ? 'bg-primary/10 text-foreground cursor-pointer' : '',
+                isAvail    ? 'cursor-pointer hover:bg-primary/15 hover:text-primary' : '',
+                isPast     ? 'text-muted-foreground/25 cursor-default' : '',
+                isOccupied ? 'text-red-400/70 cursor-not-allowed line-through' : '',,
               ].join(' ')}
               onClick={() => handleClick(day)}
             >
-              <div className={[
-                'w-9 h-9 flex items-center justify-center text-sm font-medium select-none transition-colors',
-                // start / end: full circle, primary colour
-                isStart || isEnd
-                  ? 'rounded-full bg-primary text-primary-foreground font-bold cursor-pointer'
-                  : '',
-                // in range: no rounding, subtle tint
-                inRange
-                  ? 'rounded-none text-foreground cursor-pointer'
-                  : '',
-                // available: CSS hover only (no state)
-                isAvail
-                  ? 'rounded-full cursor-pointer hover:bg-primary/15 hover:text-primary'
-                  : '',
-                // past
-                isPast
-                  ? 'rounded-full text-muted-foreground/25 cursor-default'
-                  : '',
-                // occupied: strikethrough style
-                isOccupied
-                  ? 'rounded-full text-muted-foreground/30 cursor-not-allowed line-through'
-                  : '',
-              ].join(' ')}
-              >
-                {day}
-              </div>
+              {day}
             </div>
           )
         })}

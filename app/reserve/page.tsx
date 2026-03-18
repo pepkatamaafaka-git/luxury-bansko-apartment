@@ -88,7 +88,7 @@ function MiniCalendar({ checkIn, checkOut, onSelect, lang, occupied }: {
         {DAYS.map(d => <div key={d} className="h-8 flex items-center justify-center text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">{d}</div>)}
       </div>
       <div className="grid grid-cols-7">
-        {Array.from({ length: first }).map((_, i) => <div key={`p${i}`} />)}
+        {Array.from({ length: first }).map((_, i) => <div key={`p${i}`} className="h-10" />)}
         {Array.from({ length: days }, (_, i) => i + 1).map(day => {
           const s = dayStatuses[day]
           const isStart    = s === 'start'
@@ -101,22 +101,16 @@ function MiniCalendar({ checkIn, checkOut, onSelect, lang, occupied }: {
             <div
               key={day}
               className={[
-                'relative h-10 flex items-center justify-center',
-                inRange  ? 'bg-primary/10' : '',
-                isStart  ? 'bg-gradient-to-l from-primary/10 from-50% to-transparent to-50%' : '',
-                isEnd    ? 'bg-gradient-to-r from-primary/10 from-50% to-transparent to-50%' : '',
+                'h-10 flex items-center justify-center text-sm font-medium transition-colors select-none',
+                isStart    ? 'bg-primary text-primary-foreground font-bold cursor-pointer rounded-l-xl' : '',
+                isEnd      ? 'bg-primary text-primary-foreground font-bold cursor-pointer rounded-r-xl' : '',
+                inRange    ? 'bg-primary/10 text-foreground cursor-pointer' : '',
+                isAvail    ? 'cursor-pointer hover:bg-primary/15 hover:text-primary' : '',
+                isPast     ? 'text-muted-foreground/25 cursor-default' : '',
+                isOccupied ? 'text-red-400/70 cursor-not-allowed line-through' : '',
               ].join(' ')}
               onClick={() => s !== 'past' && s !== 'occupied' && onSelect(new Date(viewYear, viewMonth, day))}
-            >
-              <div className={[
-                'w-9 h-9 flex items-center justify-center text-sm font-medium transition-colors',
-                isStart || isEnd ? 'rounded-full bg-primary text-primary-foreground font-bold cursor-pointer' : '',
-                inRange          ? 'rounded-none text-foreground cursor-pointer' : '',
-                isAvail          ? 'rounded-full cursor-pointer hover:bg-primary/15 hover:text-primary' : '',
-                isPast           ? 'rounded-full text-muted-foreground/25 cursor-default' : '',
-                isOccupied       ? 'rounded-full text-muted-foreground/30 cursor-not-allowed line-through' : '',
-              ].join(' ')}>{day}</div>
-            </div>
+            >{day}</div>
           )
         })}
       </div>
