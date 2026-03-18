@@ -3,7 +3,7 @@ import type { Booking } from './supabase'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-const FROM = 'Банско Апартамент <noreply@yourdomain.com>'
+const FROM = 'Банско Апартамент <noreply@luxury-bansko-apartment.com>'
 
 function formatDateBG(dateStr: string) {
   const d = new Date(dateStr)
