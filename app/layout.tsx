@@ -26,11 +26,20 @@ export const metadata: Metadata = {
   description:
     'Двустаен апартамент в най-добрия 4-звезден планински СПА хотел в България. Ски, SPA, летни преходи — целогодишно в Банско.',
   keywords: ['Банско', 'апартамент', 'СПА', 'ски', 'планинска почивка', 'Св. Иван Рилски'],
+  metadataBase: new URL('https://bansko-apartment.com'),
+  alternates: { canonical: 'https://bansko-apartment.com' },
   openGraph: {
     title: 'Апартамент в Банско | Св. Иван Рилски СПА Ризорт',
     description: 'Двустаен апартамент в топ планински СПА ризорт — 9.7/10 на Booking.',
+    url: 'https://bansko-apartment.com',
+    siteName: 'Bansko Apartment',
     locale: 'bg_BG',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Апартамент в Банско | Св. Иван Рилски СПА Ризорт',
+    description: 'Двустаен апартамент в топ планински СПА ризорт — 9.7/10 на Booking.',
   },
 }
 

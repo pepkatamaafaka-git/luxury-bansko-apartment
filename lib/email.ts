@@ -107,4 +107,27 @@ export async function sendBookingConfirmation(booking: Booking): Promise<void> {
     subject: `✓ Резервация потвърдена — ${checkInFmt} – ${checkOutFmt}`,
     html,
   })
+
+  // Notify owner
+  await resend.emails.send({
+    from: FROM,
+    to: 'danimarkov81@gmail.com',
+    subject: `🏠 Нова резервация — ${checkInFmt} – ${checkOutFmt}`,
+    html: `
+<div style="font-family:system-ui,sans-serif;max-width:520px;margin:0 auto;padding:32px;background:#f9fafb;border-radius:12px;">
+  <h2 style="margin:0 0 16px;color:#111827;">Нова резервация</h2>
+  <table style="width:100%;border-collapse:collapse;font-size:14px;">
+    <tr><td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #e5e7eb;">Гост</td><td style="padding:8px 0;font-weight:600;border-bottom:1px solid #e5e7eb;">${booking.guest_name ?? '—'}</td></tr>
+    <tr><td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #e5e7eb;">Имейл</td><td style="padding:8px 0;border-bottom:1px solid #e5e7eb;">${booking.guest_email}</td></tr>
+    <tr><td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #e5e7eb;">Телефон</td><td style="padding:8px 0;border-bottom:1px solid #e5e7eb;">${booking.guest_phone ?? '—'}</td></tr>
+    <tr><td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #e5e7eb;">Пристигане</td><td style="padding:8px 0;font-weight:600;border-bottom:1px solid #e5e7eb;">${checkInFmt}</td></tr>
+    <tr><td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #e5e7eb;">Напускане</td><td style="padding:8px 0;font-weight:600;border-bottom:1px solid #e5e7eb;">${checkOutFmt}</td></tr>
+    <tr><td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #e5e7eb;">Нощи</td><td style="padding:8px 0;border-bottom:1px solid #e5e7eb;">${nights}</td></tr>
+    <tr><td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #e5e7eb;">Гости</td><td style="padding:8px 0;border-bottom:1px solid #e5e7eb;">${booking.guests_count ?? '—'}</td></tr>
+    <tr><td style="padding:8px 0;color:#6b7280;">Сума</td><td style="padding:8px 0;font-weight:700;font-size:18px;color:#4f46e5;">${booking.total_price ? `€${booking.total_price}` : '—'}</td></tr>
+  </table>
+  <p style="margin-top:24px;font-size:12px;color:#9ca3af;">ID: ${booking.id}</p>
+</div>
+    `.trim(),
+  })
 }

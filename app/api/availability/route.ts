@@ -36,7 +36,7 @@ export async function GET(req: Request) {
   // Only expose date ranges — no guest details
   return NextResponse.json(data ?? [], {
     headers: {
-      'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+      'Cache-Control': 'no-store',
     },
   })
 }
