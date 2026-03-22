@@ -5,16 +5,14 @@ import { usePathname } from 'next/navigation'
 import { useLang } from '@/components/lang-provider'
 import { useSeason } from '@/components/season-provider'
 import { useEffect, useState } from 'react'
-import { Menu, X, Snowflake, Sun, CalendarCheck } from 'lucide-react'
+import { Menu, X, Snowflake, Sun, CalendarCheck, ChevronUp } from 'lucide-react'
 
 const navLinks = [
   { href: '/',            bg: 'Начало',           en: 'Home' },
   { href: '/bansko',      bg: 'Банско',           en: 'Bansko' },
   { href: '/resort-spa',  bg: 'СПА Ризорт',       en: 'SPA Resort' },
   { href: '/gallery',     bg: 'Галерия',          en: 'Gallery' },
-  { href: '/apartment',       bg: 'Апартамент',            en: 'Apartment' },
-  { href: '/admin',       bg: 'Админ',            en: 'Admin' },
-
+  { href: '/apartment',   bg: 'Апартамент',        en: 'Apartment' },
 ]
 
 export function Navbar() {
@@ -22,20 +20,18 @@ export function Navbar() {
   const { season, setSeason } = useSeason()
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
-  const [scrollDir, setScrollDir] = useState<'up' | 'down'>('up')
-  const [lastY, setLastY] = useState(0)
   const [open, setOpen] = useState(false)
+  const [showTop, setShowTop] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
       const y = window.scrollY
       setScrolled(y > 50)
-      setScrollDir(y > lastY && y > 100 ? 'down' : 'up')
-      setLastY(y)
+      setShowTop(y > 400)
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastY])
+  }, [])
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href)
@@ -44,9 +40,7 @@ export function Navbar() {
     <>
       {/* ─── Main header ──────────────────────── */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrollDir === 'down' && scrolled ? '-translate-y-full' : 'translate-y-0'
-        }`}
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
         style={{
           background: 'var(--nav-bg)',
           backdropFilter: 'blur(24px) saturate(1.6)',
@@ -230,6 +224,17 @@ export function Navbar() {
           WA
         </a>
       </div>
+
+      {/* ─── Back to top button ───────────────── */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="Back to top"
+        className={`fixed bottom-24 right-5 z-50 md:bottom-8 w-11 h-11 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center transition-all duration-300 hover:opacity-90 hover:scale-110 ${
+          showTop ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none'
+        }`}
+      >
+        <ChevronUp size={20} />
+      </button>
     </>
   )
 }
