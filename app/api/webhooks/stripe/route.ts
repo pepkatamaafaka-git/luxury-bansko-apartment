@@ -3,11 +3,9 @@ import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase'
 import { sendBookingConfirmation } from '@/lib/email'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-02-25.clover',
-})
+const getStripe = () => new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-02-25.clover' })
 
-const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!
+const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET ?? ''
 
 /**
  * POST /api/webhooks/stripe
@@ -30,7 +28,7 @@ export async function POST(req: Request) {
 
   let event: Stripe.Event
   try {
-    event = stripe.webhooks.constructEvent(rawBody, signature, WEBHOOK_SECRET)
+    event = getStripe().webhooks.constructEvent(rawBody, signature, WEBHOOK_SECRET)
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Webhook signature verification failed'
     console.error('[stripe-webhook] Signature error:', message)
@@ -103,7 +101,7 @@ export async function POST(req: Request) {
         if (!paymentIntent) break
 
         // Look up the booking by matching the Stripe session that produced this payment intent
-        const { data: sessions } = await stripe.checkout.sessions.list({
+        const { data: sessions } = await getStripe().checkout.sessions.list({
           payment_intent: paymentIntent,
           limit: 1,
         }) as unknown as { data: Stripe.Checkout.Session[] }
