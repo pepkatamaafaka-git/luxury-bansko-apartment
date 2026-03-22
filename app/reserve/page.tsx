@@ -107,7 +107,7 @@ function MiniCalendar({ checkIn, checkOut, onSelect, lang, occupied }: {
                 inRange    ? 'bg-primary/10 text-foreground cursor-pointer' : '',
                 isAvail    ? 'cursor-pointer hover:bg-primary/15 hover:text-primary' : '',
                 isPast     ? 'text-muted-foreground/25 cursor-default' : '',
-                isOccupied ? 'text-red-400/70 cursor-not-allowed line-through' : '',
+                isOccupied ? 'bg-red-500/15 text-red-500 cursor-not-allowed line-through' : '',
               ].join(' ')}
               onClick={() => s !== 'past' && s !== 'occupied' && onSelect(new Date(viewYear, viewMonth, day))}
             >{day}</div>
@@ -117,7 +117,7 @@ function MiniCalendar({ checkIn, checkOut, onSelect, lang, occupied }: {
       <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-border/30 text-[11px] text-muted-foreground">
         <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-primary inline-block" />{lang === 'bg' ? 'Избрана' : 'Selected'}</span>
         <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm bg-primary/15 inline-block" />{lang === 'bg' ? 'Период' : 'Range'}</span>
-        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-muted-foreground/20 inline-block" />{lang === 'bg' ? 'Заето' : 'Occupied'}</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-red-500 inline-block" />{lang === 'bg' ? 'Заето' : 'Occupied'}</span>
       </div>
     </div>
   )

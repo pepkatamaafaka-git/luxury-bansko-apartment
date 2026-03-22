@@ -1,7 +1,8 @@
 import { createHmac, timingSafeEqual } from 'crypto'
 
 // ─── Config ──────────────────────────────────────────────────────────────────
-const SECRET = process.env.ADMIN_JWT_SECRET ?? 'dev-secret-change-in-production'
+if (!process.env.ADMIN_JWT_SECRET) throw new Error('ADMIN_JWT_SECRET env var is required')
+const SECRET = process.env.ADMIN_JWT_SECRET
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? ''
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? ''
 

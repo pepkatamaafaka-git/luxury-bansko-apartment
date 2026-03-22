@@ -48,18 +48,38 @@ export async function GET(req: Request) {
 
   // Parse VEVENT blocks
   const events = parseICalEvents(icalText)
-  if (events.length === 0) {
-    return NextResponse.json({ synced: 0, message: 'No events found in iCal feed' })
-  }
-
   const db = createServerClient()
   let synced = 0
   let skipped = 0
+  let cancelled = 0
 
+  // Build a set of active date-ranges from the feed
+  const feedKeys = new Set(
+    events
+      .filter(e => e.start && e.end)
+      .map(e => `${e.start}__${e.end}`)
+  )
+
+  // ── Reconcile: cancel DB rows no longer present in the feed ──────────────
+  const { data: existingBookingRows } = await db
+    .from('bookings')
+    .select('id, start_date, end_date')
+    .eq('source', 'booking')
+    .neq('status', 'cancelled')
+
+  for (const row of existingBookingRows ?? []) {
+    const key = `${row.start_date}__${row.end_date}`
+    if (!feedKeys.has(key)) {
+      await db.from('bookings').update({ status: 'cancelled' }).eq('id', row.id)
+      cancelled++
+    }
+  }
+
+  // ── Insert new events from the feed ──────────────────────────────────────
   for (const ev of events) {
     if (!ev.start || !ev.end) { skipped++; continue }
 
-    // Check if a booking from Booking.com already covers exactly these dates
+    // Check if already in DB
     const { data: existing } = await db
       .from('bookings')
       .select('id')
@@ -71,7 +91,7 @@ export async function GET(req: Request) {
 
     if (existing) { skipped++; continue }
 
-    // Also skip if overlapping with a confirmed stripe/manual booking
+    // Skip if overlapping with a confirmed stripe/manual booking
     const { data: conflict } = await db
       .from('bookings')
       .select('id')
@@ -99,7 +119,7 @@ export async function GET(req: Request) {
     synced++
   }
 
-  return NextResponse.json({ synced, skipped, total: events.length })
+  return NextResponse.json({ synced, skipped, cancelled, total: events.length })
 }
 
 // ─── Minimal iCal parser ──────────────────────────────────────────────────────

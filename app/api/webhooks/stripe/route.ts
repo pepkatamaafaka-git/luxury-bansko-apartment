@@ -5,7 +5,7 @@ import { sendBookingConfirmation } from '@/lib/email'
 
 const getStripe = () => new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-02-25.clover' })
 
-const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET ?? ''
+const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET ?? null
 
 /**
  * POST /api/webhooks/stripe
@@ -24,6 +24,10 @@ export async function POST(req: Request) {
 
   if (!signature) {
     return NextResponse.json({ error: 'Missing stripe-signature header' }, { status: 400 })
+  }
+
+  if (!WEBHOOK_SECRET) {
+    return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 })
   }
 
   let event: Stripe.Event
