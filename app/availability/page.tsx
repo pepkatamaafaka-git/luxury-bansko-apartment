@@ -248,7 +248,7 @@ export default function AvailabilityPage() {
   return (
     <div className="min-h-screen bg-background text-foreground page-enter">
 
-      {/* Page header */
+      {/* Page header */}
       <section className="pt-36 pb-12 px-6 max-w-3xl mx-auto text-center">
         <div className="inline-flex items-center gap-2 glass text-xs tracking-widest uppercase px-4 py-2 rounded-full text-foreground/60 mb-5">
           {season === 'winter'

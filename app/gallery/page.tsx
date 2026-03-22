@@ -173,7 +173,7 @@ export default function GalleryPage() {
   return (
     <div className="min-h-screen bg-background text-foreground page-enter">
 
-      {/* Header */
+      {/* Header */}
       <section className="pt-36 pb-16 px-6 max-w-7xl mx-auto">
         <p className="text-xs tracking-widest uppercase text-primary mb-3 font-semibold">
           {t('Визуален тур', 'Visual Tour')}
