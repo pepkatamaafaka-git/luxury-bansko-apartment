@@ -65,14 +65,14 @@ export default function ContactPage() {
           </a>
 
           {/* Email */}
-          <a href="mailto:info@bansko-apartment.bg"
+          <a href="mailto:info@bansko-apartment.com"
             className="flex items-center gap-4 glass rounded-2xl p-5 activity-card group">
             <div className="w-12 h-12 rounded-2xl bg-primary/12 flex items-center justify-center shrink-0">
               <Mail size={20} className="text-primary" />
             </div>
             <div className="flex-1">
               <p className="font-semibold">Email</p>
-              <p className="text-sm text-muted-foreground">info@bansko-apartment.bg</p>
+              <p className="text-sm text-muted-foreground">info@bansko-apartment.com</p>
               <p className="text-xs text-muted-foreground/60 mt-1">{t('Отговор до 24 часа', 'Reply within 24 hours')}</p>
             </div>
             <ArrowRight size={14} className="text-muted-foreground/50 group-hover:text-primary transition-colors" />

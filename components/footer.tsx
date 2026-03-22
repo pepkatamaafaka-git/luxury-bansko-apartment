@@ -94,8 +94,8 @@ export function Footer() {
               </a>
             </li>
             <li>
-              <a href="mailto:info@bansko-apartment.bg" className="hover:text-foreground transition-colors">
-                info@bansko-apartment.bg
+              <a href="mailto:info@bansko-apartment.com" className="hover:text-foreground transition-colors">
+                info@bansko-apartment.com
               </a>
             </li>
             <li className="text-muted-foreground/60">

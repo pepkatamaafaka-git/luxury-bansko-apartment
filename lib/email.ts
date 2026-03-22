@@ -3,7 +3,7 @@ import type { Booking } from './supabase'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-const FROM = 'Банско Апартамент <noreply@luxury-bansko-apartment.com>'
+const FROM = 'Банско Апартамент <noreply@bansko-apartment.com>'
 
 function formatDateBG(dateStr: string) {
   const d = new Date(dateStr)
@@ -94,7 +94,7 @@ export async function sendBookingConfirmation(booking: Booking): Promise<void> {
     </div>
     <div class="footer">
       <p>Благодарим ви, че избрахте нашия апартамент в Банско!</p>
-      <p style="margin-top:8px;">При въпроси: <a href="mailto:info@yourdomain.com">info@yourdomain.com</a></p>
+      <p style="margin-top:8px;">При въпроси: <a href="mailto:info@bansko-apartment.com">info@bansko-apartment.com</a></p>
     </div>
   </div>
 </body>

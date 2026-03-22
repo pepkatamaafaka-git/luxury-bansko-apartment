@@ -17,9 +17,17 @@ import { createServerClient } from '@/lib/supabase'
  * (or just protect it with a simple API key).
  */
 export async function GET(req: Request) {
-  // Basic auth via secret header
-  const secret = req.headers.get('x-sync-secret')
-  if (!secret || secret !== process.env.ICAL_SYNC_SECRET) {
+  // Accept either:
+  //   x-sync-secret: <ICAL_SYNC_SECRET>       (manual calls)
+  //   Authorization: Bearer <CRON_SECRET>      (Vercel Cron Jobs — set automatically)
+  const xSecret = req.headers.get('x-sync-secret')
+  const authHeader = req.headers.get('authorization')
+  const cronSecret = process.env.CRON_SECRET
+
+  const validSecret = xSecret && xSecret === process.env.ICAL_SYNC_SECRET
+  const validCron = cronSecret && authHeader === `Bearer ${cronSecret}`
+
+  if (!validSecret && !validCron) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
