@@ -1,0 +1,17 @@
+name: Sync Booking.com iCal
+
+on:
+  schedule:
+    # Every 30 minutes
+    - cron: '*/30 * * * *'
+  workflow_dispatch: # allow manual trigger from GitHub UI
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull Booking.com calendar
+        run: |
+          curl -sf \
+            -H "x-sync-secret: ${{ secrets.ICAL_SYNC_SECRET }}" \
+            "https://bansko-apartment.com/api/sync/booking-ical"
