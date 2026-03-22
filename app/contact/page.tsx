@@ -1,6 +1,5 @@
 'use client'
 
-import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { useLang } from '@/components/lang-provider'
 import { useState } from 'react'
@@ -33,9 +32,7 @@ export default function ContactPage() {
         <HeroCanvas />
       </div>
 
-      <Navbar />
-
-      {/* Hero */}
+      {/* Hero */
       <section className="relative pt-36 pb-20 overflow-hidden" style={{ zIndex: 1 }}>
         <div className="max-w-3xl mx-auto px-6 text-center relative z-10">
           <h1 className="text-5xl md:text-6xl font-bold mb-4 text-balance">{t('Свържи се с нас', 'Get in Touch')}</h1>

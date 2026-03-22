@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useLang } from '@/components/lang-provider'
 import { useSeason } from '@/components/season-provider'
-import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { useScrollReveal } from '@/hooks/use-scroll-reveal'
 import { useEffect, useRef, useState } from 'react'
@@ -141,7 +140,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground page-enter">
-      <Navbar />
 
       {/* ─── Hero ──────────────────────────────────────────── */}
       <section className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">

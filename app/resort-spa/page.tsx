@@ -1,6 +1,5 @@
 'use client'
 
-import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { useLang } from '@/components/lang-provider'
 import { useScrollReveal } from '@/hooks/use-scroll-reveal'
@@ -78,8 +77,6 @@ export default function ResortSPAPage() {
       <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }}>
         <HeroCanvas />
       </div>
-
-      <Navbar />
 
       {/* ─── Hero ─────────────────────────────── */}
       <section className="relative pt-36 pb-28 overflow-hidden" style={{ zIndex: 1 }}>

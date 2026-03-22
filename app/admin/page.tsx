@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo, useEffect, useCallback } from 'react'
-import { Navbar } from '@/components/navbar'
 import {
   ChevronLeft, ChevronRight, X, Plus, Pencil, Check, Trash2,
   CalendarDays, DollarSign, Lock, Moon, Sun, Save,
@@ -363,7 +362,6 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navbar />
 
       <main className="max-w-6xl mx-auto px-4 pt-24 pb-20">
 

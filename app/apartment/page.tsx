@@ -3,7 +3,6 @@
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
-import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { useLang } from '@/components/lang-provider'
 import { useSeason } from '@/components/season-provider'
@@ -530,7 +529,6 @@ const prevApartmentHero = () => setApartmentHeroSlide((s) => (s - 1 + apartmentG
 
   return (
     <div className="min-h-screen bg-background text-foreground page-enter">
-      <Navbar />
 
       <section className="relative h-[86vh] min-h-[620px] flex items-center justify-center overflow-hidden">
         <HeroCanvas />

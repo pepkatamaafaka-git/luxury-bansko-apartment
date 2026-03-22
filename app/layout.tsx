@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { SeasonProvider } from '@/components/season-provider'
 import { LangProvider } from '@/components/lang-provider'
+import { Navbar } from '@/components/navbar'
 
 const dmSans = DM_Sans({
   subsets: ['latin', 'latin-ext'],
@@ -54,6 +55,7 @@ export default function RootLayout({
       <body className={`${dmSans.variable} ${dmSerif.variable} font-sans antialiased`}>
         <LangProvider>
           <SeasonProvider>
+            <Navbar />
             {children}
           </SeasonProvider>
         </LangProvider>

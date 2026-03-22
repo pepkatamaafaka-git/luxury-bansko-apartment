@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { useLang } from '@/components/lang-provider'
 import Link from 'next/link'
@@ -287,7 +286,6 @@ function ReserveInner() {
   if (success) {
     return (
       <div className="min-h-screen bg-background text-foreground">
-        <Navbar />
         <div className="max-w-md mx-auto px-6 pt-40 pb-24 text-center">
           <div className="w-20 h-20 rounded-full bg-primary/12 flex items-center justify-center mx-auto mb-6">
             <Check size={36} className="text-primary" />
@@ -310,7 +308,6 @@ function ReserveInner() {
   if (cancelled) {
     return (
       <div className="min-h-screen bg-background text-foreground">
-        <Navbar />
         <div className="max-w-md mx-auto px-6 pt-40 pb-24 text-center">
           <h1 className="text-2xl font-bold mb-3">{t('Плащането е отказано', 'Payment Cancelled')}</h1>
           <p className="text-muted-foreground mb-8">{t('Не е извършено плащане. Датите остават свободни.', 'No payment was taken. The dates remain available.')}</p>
@@ -326,7 +323,6 @@ function ReserveInner() {
   // ─── Main flow ────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background text-foreground page-enter">
-      <Navbar />
 
       <section className="pt-36 pb-12 px-6 max-w-2xl mx-auto text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-3">{t('Онлайн резервация', 'Online Reservation')}</h1>

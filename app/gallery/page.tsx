@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { useLang } from '@/components/lang-provider'
 import { useSeason } from '@/components/season-provider'
@@ -173,9 +172,8 @@ export default function GalleryPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground page-enter">
-      <Navbar />
 
-      {/* Header */}
+      {/* Header */
       <section className="pt-36 pb-16 px-6 max-w-7xl mx-auto">
         <p className="text-xs tracking-widest uppercase text-primary mb-3 font-semibold">
           {t('Визуален тур', 'Visual Tour')}
