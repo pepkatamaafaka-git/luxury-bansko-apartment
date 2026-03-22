@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Pull Booking.com calendar
         run: |
-          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
+          RESPONSE=$(curl -s -L -w "\nHTTP_STATUS:%{http_code}" \
             -H "x-sync-secret: ${{ secrets.ICAL_SYNC_SECRET }}" \
             "https://bansko-apartment.com/api/sync/booking-ical")
           HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
