@@ -12,6 +12,14 @@ jobs:
     steps:
       - name: Pull Booking.com calendar
         run: |
-          curl -sf \
+          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
             -H "x-sync-secret: ${{ secrets.ICAL_SYNC_SECRET }}" \
-            "https://bansko-apartment.com/api/sync/booking-ical"
+            "https://bansko-apartment.com/api/sync/booking-ical")
+          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
+          BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS:/d')
+          echo "Status: $HTTP_STATUS"
+          echo "Response: $BODY"
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "FAILED with status $HTTP_STATUS"
+            exit 1
+          fi
