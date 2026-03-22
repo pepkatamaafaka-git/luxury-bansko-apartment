@@ -1,5 +1,12 @@
+import { createHmac, timingSafeEqual } from 'crypto'
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase'
+
+function safeEqual(a: string, b: string): boolean {
+  const ha = createHmac('sha256', 'sync-cmp').update(a).digest()
+  const hb = createHmac('sha256', 'sync-cmp').update(b).digest()
+  return timingSafeEqual(ha, hb)
+}
 
 /**
  * GET /api/sync/booking-ical
@@ -24,8 +31,8 @@ export async function GET(req: Request) {
   const authHeader = req.headers.get('authorization')
   const cronSecret = process.env.CRON_SECRET
 
-  const validSecret = xSecret && xSecret === process.env.ICAL_SYNC_SECRET
-  const validCron = cronSecret && authHeader === `Bearer ${cronSecret}`
+  const validSecret = !!(xSecret && process.env.ICAL_SYNC_SECRET && safeEqual(xSecret, process.env.ICAL_SYNC_SECRET))
+  const validCron = !!(cronSecret && authHeader && safeEqual(authHeader, `Bearer ${cronSecret}`))
 
   if (!validSecret && !validCron) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

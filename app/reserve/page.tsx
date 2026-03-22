@@ -215,12 +215,41 @@ function ReserveInner() {
   const nights = checkIn && checkOut ? Math.round((checkOut.getTime() - checkIn.getTime()) / 86_400_000) : 0
   const total = checkIn && checkOut && nights > 0 ? calcTotal(checkIn, checkOut, rules, guests) : 0
   const avg = nights > 0 ? Math.round(total / nights) : 0
-  const canBook = !!checkIn && !!checkOut && nights >= 1 && form.name.trim().length > 0 && form.email.includes('@') && agreed
+
+  // Check if any day in the selected range is occupied
+  const rangeHasOccupied = useMemo(() => {
+    if (!checkIn || !checkOut) return false
+    const cur = new Date(checkIn)
+    cur.setDate(cur.getDate() + 1) // checkIn night itself is fine, check days after
+    while (cur < checkOut) {
+      const k = cur.toISOString().split('T')[0]
+      if (occupied.has(k)) return true
+      cur.setDate(cur.getDate() + 1)
+    }
+    return false
+  }, [checkIn, checkOut, occupied])
+
+  const canBook = !!checkIn && !!checkOut && nights >= 1 && !rangeHasOccupied && form.name.trim().length > 0 && form.email.includes('@') && agreed
 
   function handleDateSelect(date: Date) {
-    if (!checkIn || (checkIn && checkOut)) { setCheckIn(date); setCheckOut(null) }
-    else if (date > checkIn) { setCheckOut(date) }
-    else { setCheckIn(date); setCheckOut(null) }
+    const key = date.toISOString().split('T')[0]
+    if (occupied.has(key)) return // never allow clicking occupied date
+    if (!checkIn || (checkIn && checkOut)) {
+      setCheckIn(date); setCheckOut(null)
+    } else if (date > checkIn) {
+      // Check if range between checkIn and new date contains any occupied day
+      const cur = new Date(checkIn)
+      cur.setDate(cur.getDate() + 1)
+      let hasConflict = false
+      while (cur < date) {
+        if (occupied.has(cur.toISOString().split('T')[0])) { hasConflict = true; break }
+        cur.setDate(cur.getDate() + 1)
+      }
+      if (hasConflict) { setCheckIn(date); setCheckOut(null) } // start new selection
+      else { setCheckOut(date) }
+    } else {
+      setCheckIn(date); setCheckOut(null)
+    }
   }
 
   async function handlePay() {
@@ -443,6 +472,16 @@ function ReserveInner() {
                        'I have read and accept the booking conditions and cancellation policy.')}
                   </span>
                 </label>
+
+                {rangeHasOccupied && (
+                  <div className="p-3 rounded-xl bg-destructive/10 text-destructive text-sm flex items-start gap-2">
+                    <Info size={15} className="shrink-0 mt-0.5" />
+                    {t(
+                      'Избраният период включва вече заети дни. Моля, изберете други дати.',
+                      'Your selected period includes already occupied dates. Please choose different dates.',
+                    )}
+                  </div>
+                )}
 
                 {submitError && (
                   <div className="p-3 rounded-xl bg-destructive/10 text-destructive text-sm flex items-start gap-2">

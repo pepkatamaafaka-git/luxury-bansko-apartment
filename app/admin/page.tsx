@@ -199,7 +199,7 @@ export default function AdminPage() {
   const [editingPriceId, setEditingPriceId] = useState<string | null>(null)
   const [actionLoading, setActionLoading] = useState(false)
 
-  // Build occupied key set
+  // Build occupied key set (end_date is checkout day — excluded)
   const occupiedKeys = useMemo(() => {
     const keys = new Set<string>()
     for (const b of bookings) {
@@ -207,9 +207,38 @@ export default function AdminPage() {
       const s = fromKey(b.start_date)
       const e = fromKey(b.end_date)
       const cur = new Date(s)
-      while (cur <= e) { keys.add(toKey(cur)); cur.setDate(cur.getDate() + 1) }
+      while (cur < e) { keys.add(toKey(cur)); cur.setDate(cur.getDate() + 1) }
     }
     return keys
+  }, [bookings])
+
+  // Checkout dates: last day of a booking — free for new arrivals, shown in purple
+  const checkoutKeys = useMemo(() => {
+    const keys = new Set<string>()
+    for (const b of bookings) {
+      if (b.status === 'cancelled') continue
+      keys.add(b.end_date)
+    }
+    return keys
+  }, [bookings])
+
+  // Maps for check-in and check-out times shown on calendar cells (admin only)
+  const checkinMap = useMemo(() => {
+    const map = new Map<string, string>() // date → guest name
+    for (const b of bookings) {
+      if (b.status === 'cancelled') continue
+      map.set(b.start_date, b.guest_name ?? 'Гост')
+    }
+    return map
+  }, [bookings])
+
+  const checkoutMap = useMemo(() => {
+    const map = new Map<string, string>() // date → guest name
+    for (const b of bookings) {
+      if (b.status === 'cancelled') continue
+      map.set(b.end_date, b.guest_name ?? 'Гост')
+    }
+    return map
   }, [bookings])
 
   // Get price for a given date
@@ -241,6 +270,8 @@ export default function AdminPage() {
   function getDayCellClass(day: number) {
     const key = toKey(new Date(viewYear, viewMonth, day))
     const isOccupied = occupiedKeys.has(key)
+    const isCheckout = !isOccupied && checkoutKeys.has(key)
+    const isCheckinDay = !isOccupied && !isCheckout && checkinMap.has(key)
     const isToday = key === toKey(today)
     const inSel = selectionStart && selectionEnd
       ? key >= selectionStart && key <= selectionEnd
@@ -249,6 +280,8 @@ export default function AdminPage() {
     const isEnd = key === selectionEnd
     let cls = 'relative w-full aspect-square flex flex-col items-center justify-center rounded-lg text-sm font-medium transition-all cursor-pointer select-none '
     if (isOccupied) cls += 'bg-red-100 text-red-700 hover:bg-red-200 '
+    else if (isCheckout) cls += 'bg-purple-100 text-purple-700 hover:bg-purple-200 ring-1 ring-purple-300 '
+    else if (isCheckinDay) cls += 'bg-green-50 text-green-800 hover:bg-green-100 ring-1 ring-green-300 '
     else if (inSel && (isStart || isEnd)) cls += 'bg-primary text-primary-foreground '
     else if (inSel) cls += 'bg-primary/20 text-primary '
     else if (isToday) cls += 'ring-2 ring-primary text-primary '
@@ -432,22 +465,49 @@ export default function AdminPage() {
                   if (!day) return <div key={`empty-${idx}`} />
                   const key = toKey(new Date(viewYear, viewMonth, day))
                   const isOccupied = occupiedKeys.has(key)
+                  const isCheckout = !isOccupied && checkoutKeys.has(key)
+                  const isCheckin = checkinMap.has(key)
+                  const checkinGuest = checkinMap.get(key)
+                  const checkoutGuest = checkoutMap.get(key)
                   const price = getPriceForDate(new Date(viewYear, viewMonth, day))
+
+                  // Build tooltip
+                  const titleText = isOccupied
+                    ? (checkinGuest ? `Заето — ${checkinGuest}` : 'Заето')
+                    : isCheckout
+                    ? `Напускане 10:00${checkoutGuest ? ` — ${checkoutGuest}` : ''} | Свободно за нови гости`
+                    : `€${price}/нощ`
 
                   return (
                     <button
                       key={day}
                       onClick={() => handleDayClick(day)}
                       className={getDayCellClass(day)}
-                      title={isOccupied ? 'Заето' : `€${price}/нощ`}
+                      title={titleText}
                     >
                       {/* Occupied X mark */}
                       {isOccupied && (
                         <X size={10} className="absolute top-0.5 right-0.5 text-red-500" strokeWidth={3} />
                       )}
+                      {/* Checkout dot */}
+                      {isCheckout && (
+                        <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-purple-500" />
+                      )}
                       <span className="leading-none">{day}</span>
-                      {/* Price hint */}
-                      {!isOccupied && price && (
+                      {/* Check-in time badge (start of booking) */}
+                      {isCheckin && (
+                        <span className="text-[7px] font-bold leading-none mt-0.5 text-green-700 hidden md:block">
+                          ↓ 15:00
+                        </span>
+                      )}
+                      {/* Check-out time badge (end of booking) */}
+                      {isCheckout && (
+                        <span className="text-[7px] font-bold leading-none mt-0.5 text-purple-700 hidden md:block">
+                          ↑ 10:00
+                        </span>
+                      )}
+                      {/* Price hint — only on plain free days */}
+                      {!isOccupied && !isCheckout && !isCheckin && price && (
                         <span className="text-[8px] text-muted-foreground leading-none mt-0.5 hidden md:block">
                           €{price}
                         </span>
@@ -464,6 +524,16 @@ export default function AdminPage() {
                     <X size={9} className="text-red-500" strokeWidth={3} />
                   </span>
                   Заето
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-4 h-4 rounded bg-green-50 ring-1 ring-green-300" />
+                  Настаняване ↓ 15:00
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-4 h-4 rounded bg-purple-100 ring-1 ring-purple-300 flex items-center justify-center">
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
+                  </span>
+                  Напускане ↑ 10:00 (свободно)
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="w-4 h-4 rounded bg-primary/20" />

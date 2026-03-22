@@ -1,5 +1,13 @@
+import { createHmac, timingSafeEqual } from 'crypto'
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase'
+
+function safeEqual(a: string, b: string): boolean {
+  // Hash both to equal-length buffers before comparing to prevent timing side-channels
+  const ha = createHmac('sha256', 'ical-cmp').update(a).digest()
+  const hb = createHmac('sha256', 'ical-cmp').update(b).digest()
+  return timingSafeEqual(ha, hb)
+}
 
 /**
  * GET /api/ical?token=<ICAL_EXPORT_TOKEN>
@@ -15,7 +23,8 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const token = searchParams.get('token')
 
-  if (!token || token !== process.env.ICAL_EXPORT_TOKEN) {
+  const expectedToken = process.env.ICAL_EXPORT_TOKEN
+  if (!token || !expectedToken || !safeEqual(token, expectedToken)) {
     return new NextResponse('Unauthorized', { status: 401 })
   }
 
