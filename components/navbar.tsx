@@ -42,11 +42,8 @@ export function Navbar() {
       <header
         className="fixed top-0 left-0 right-0 z-50 transition-shadow duration-300"
         style={{
-          backgroundColor: scrolled ? 'var(--background)' : 'var(--nav-bg)',
-          backdropFilter: scrolled ? 'none' : 'blur(24px) saturate(1.6)',
-          WebkitBackdropFilter: scrolled ? 'none' : 'blur(24px) saturate(1.6)',
-          boxShadow: scrolled ? '0 1px 8px 0 rgba(0,0,0,0.10)' : 'none',
-          borderBottom: scrolled ? '1px solid var(--border)' : 'none',
+          backgroundColor: 'var(--background)',
+          boxShadow: scrolled ? '0 1px 8px 0 rgba(0,0,0,0.10)' : '0 1px 0 0 var(--border)',
         }}
       >
         <div className="max-w-7xl mx-auto px-5 md:px-8">
