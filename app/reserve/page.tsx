@@ -205,6 +205,11 @@ function ReserveInner() {
             while (cur < end) { set.add(cur.toISOString().split('T')[0]); cur.setDate(cur.getDate() + 1) }
           }
           setOccupied(set)
+          // Reset any URL-seeded dates that turn out to be occupied
+          setCheckIn(prev => {
+            if (prev && set.has(prev.toISOString().split('T')[0])) { setCheckOut(null); setStep(1); return null }
+            return prev
+          })
         }
         if (Array.isArray(priceRules) && priceRules.length > 0) setRules(priceRules)
       })
@@ -361,9 +366,9 @@ function ReserveInner() {
                   </div>
                 </div>
                 <button
-                  disabled={!checkIn || !checkOut || nights < 1}
+                  disabled={!checkIn || !checkOut || nights < 1 || rangeHasOccupied}
                   onClick={() => setStep(2)}
-                  className={`w-full flex items-center justify-center gap-2 font-semibold py-3.5 rounded-full transition-all ${checkIn && checkOut && nights >= 1 ? 'btn-gradient cta-glow' : 'bg-muted text-muted-foreground cursor-not-allowed'}`}
+                  className={`w-full flex items-center justify-center gap-2 font-semibold py-3.5 rounded-full transition-all ${checkIn && checkOut && nights >= 1 && !rangeHasOccupied ? 'btn-gradient cta-glow' : 'bg-muted text-muted-foreground cursor-not-allowed'}`}
                 >
                   {t('Продължи', 'Continue')} <ArrowRight size={15} />
                 </button>
@@ -421,9 +426,9 @@ function ReserveInner() {
                       className="w-full bg-input border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all placeholder:text-muted-foreground/50" />
                   </div>
                   <button
-                    disabled={!form.name.trim() || !form.email.includes('@')}
+                    disabled={!form.name.trim() || !form.email.includes('@') || rangeHasOccupied}
                     onClick={() => setStep(3)}
-                    className={`w-full flex items-center justify-center gap-2 font-semibold py-3.5 rounded-full transition-all ${form.name.trim() && form.email.includes('@') ? 'btn-gradient cta-glow' : 'bg-muted text-muted-foreground cursor-not-allowed'}`}
+                    className={`w-full flex items-center justify-center gap-2 font-semibold py-3.5 rounded-full transition-all ${form.name.trim() && form.email.includes('@') && !rangeHasOccupied ? 'btn-gradient cta-glow' : 'bg-muted text-muted-foreground cursor-not-allowed'}`}
                   >
                     {t('Към плащане', 'To Payment')} <ArrowRight size={15} />
                   </button>

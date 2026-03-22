@@ -475,7 +475,7 @@ export default function AdminPage() {
                   const titleText = isOccupied
                     ? (checkinGuest ? `Заето — ${checkinGuest}` : 'Заето')
                     : isCheckout
-                    ? `Напускане 10:00${checkoutGuest ? ` — ${checkoutGuest}` : ''} | Свободно за нови гости`
+                    ? `Напускане 11:00${checkoutGuest ? ` — ${checkoutGuest}` : ''} | Свободно за нови гости`
                     : `€${price}/нощ`
 
                   return (
@@ -503,7 +503,7 @@ export default function AdminPage() {
                       {/* Check-out time badge (end of booking) */}
                       {isCheckout && (
                         <span className="text-[7px] font-bold leading-none mt-0.5 text-purple-700 hidden md:block">
-                          ↑ 10:00
+                          ↑ 11:00
                         </span>
                       )}
                       {/* Price hint — only on plain free days */}
@@ -533,7 +533,7 @@ export default function AdminPage() {
                   <span className="w-4 h-4 rounded bg-purple-100 ring-1 ring-purple-300 flex items-center justify-center">
                     <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
                   </span>
-                  Напускане ↑ 10:00 (свободно)
+                  Напускане ↑ 11:00 (свободно)
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="w-4 h-4 rounded bg-primary/20" />
