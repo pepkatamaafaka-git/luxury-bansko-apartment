@@ -60,16 +60,24 @@ export async function POST(req: Request) {
   // Check for date conflicts
   const { data: conflicts } = await db
     .from('bookings')
-    .select('id, start_date, end_date')
+    .select('id, start_date, end_date, source')
     .neq('status', 'cancelled')
     .lt('start_date', end_date)
     .gt('end_date', start_date)
 
   if (conflicts && conflicts.length > 0) {
-    return NextResponse.json(
-      { error: 'Date range conflicts with an existing booking', conflicts },
-      { status: 409 },
-    )
+    // Auto-cancel any iCal-synced conflicts (source='booking' or 'airbnb') so the manual
+    // booking takes priority. If there are conflicts from a real manual/stripe booking, reject.
+    const hardConflicts = conflicts.filter(c => c.source !== 'booking' && c.source !== 'airbnb')
+    if (hardConflicts.length > 0) {
+      return NextResponse.json(
+        { error: 'Date range conflicts with an existing booking', conflicts: hardConflicts },
+        { status: 409 },
+      )
+    }
+    // Cancel the auto-synced entries — the manual booking overrides them
+    const idsToCancel = conflicts.map(c => c.id)
+    await db.from('bookings').update({ status: 'cancelled' }).in('id', idsToCancel)
   }
 
   const { data, error } = await db
