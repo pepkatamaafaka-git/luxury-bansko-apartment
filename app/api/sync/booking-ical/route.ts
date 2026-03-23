@@ -58,11 +58,32 @@ export async function GET(req: Request) {
   const db = createServerClient()
   let synced = 0
   let skipped = 0
+  let cancelled = 0
 
-  // ── Insert new events from the feed — ONLY add, NEVER cancel ─────────────
-  // Cancellations must be done manually from the admin panel.
-  // The iCal feed is treated as append-only: if Booking.com removes an event
-  // from the feed, we do NOT touch the existing DB row.
+  // ── Step 1: Cancel source='booking' rows no longer in the feed ───────────
+  // If Booking.com removes a reservation from its iCal feed, we cancel it here.
+  // We match by OVERLAP (not exact dates) — if ANY feed event overlaps the DB
+  // row, the row is considered still active. Only cancel when truly gone.
+  //
+  // NOTE: circular sync is prevented because /api/ical only exports manual/stripe
+  // bookings — we never send Booking.com's own reservations back to them.
+  const { data: existingBookingRows } = await db
+    .from('bookings')
+    .select('id, start_date, end_date')
+    .eq('source', 'booking')
+    .neq('status', 'cancelled')
+
+  for (const row of existingBookingRows ?? []) {
+    const stillInFeed = events.some(
+      ev => ev.start < row.end_date && ev.end > row.start_date
+    )
+    if (!stillInFeed) {
+      await db.from('bookings').update({ status: 'cancelled' }).eq('id', row.id)
+      cancelled++
+    }
+  }
+
+  // ── Step 2: Insert new events from the feed ───────────────────────────────
   for (const ev of events) {
     // Skip if an overlapping source='booking' row already exists
     const { data: existing } = await db
@@ -104,7 +125,7 @@ export async function GET(req: Request) {
     synced++
   }
 
-  return NextResponse.json({ synced, skipped, total: events.length })
+  return NextResponse.json({ synced, skipped, cancelled, total: events.length })
 }
 
 // ─── Minimal iCal parser ──────────────────────────────────────────────────────

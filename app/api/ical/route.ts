@@ -37,10 +37,14 @@ export async function GET(req: Request) {
     return d.toISOString().split('T')[0]
   })()
 
+  // Export only manual/stripe bookings — NOT source='booking' or 'airbnb'.
+  // Booking.com already knows about its own reservations; exporting them back
+  // would create a circular sync and cause Booking.com to double-block dates.
   const { data, error } = await db
     .from('bookings')
     .select('id, start_date, end_date')
     .neq('status', 'cancelled')
+    .in('source', ['manual', 'stripe'])
     .lt('start_date', futureDate)
     .gt('end_date', today)
     .order('start_date', { ascending: true })
