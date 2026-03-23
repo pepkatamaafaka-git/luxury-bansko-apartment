@@ -54,20 +54,16 @@ export async function GET(req: Request) {
   }
 
   // Parse VEVENT blocks
-  const events = parseICalEvents(icalText)
+  const events = parseICalEvents(icalText).filter(e => e.start && e.end) as Array<{ start: string; end: string; summary: string | null }>
   const db = createServerClient()
   let synced = 0
   let skipped = 0
   let cancelled = 0
 
-  // Build a set of active date-ranges from the feed
-  const feedKeys = new Set(
-    events
-      .filter(e => e.start && e.end)
-      .map(e => `${e.start}__${e.end}`)
-  )
-
-  // ── Reconcile: cancel DB rows no longer present in the feed ──────────────
+  // ── Reconcile: cancel source='booking' rows no longer covered by ANY feed event ──
+  // We match by OVERLAP (not exact dates) so minor date changes in the feed don't
+  // wrongly cancel real bookings. A DB row is only cancelled if NO feed event
+  // overlaps with it at all — meaning Booking.com truly removed it.
   const { data: existingBookingRows } = await db
     .from('bookings')
     .select('id, start_date, end_date')
@@ -75,8 +71,10 @@ export async function GET(req: Request) {
     .neq('status', 'cancelled')
 
   for (const row of existingBookingRows ?? []) {
-    const key = `${row.start_date}__${row.end_date}`
-    if (!feedKeys.has(key)) {
+    const coveredByFeed = events.some(
+      ev => ev.start < row.end_date && ev.end > row.start_date
+    )
+    if (!coveredByFeed) {
       await db.from('bookings').update({ status: 'cancelled' }).eq('id', row.id)
       cancelled++
     }
@@ -84,21 +82,19 @@ export async function GET(req: Request) {
 
   // ── Insert new events from the feed ──────────────────────────────────────
   for (const ev of events) {
-    if (!ev.start || !ev.end) { skipped++; continue }
-
-    // Check if already in DB
+    // Check if already in DB (overlapping source='booking' row already exists)
     const { data: existing } = await db
       .from('bookings')
       .select('id')
       .eq('source', 'booking')
-      .eq('start_date', ev.start)
-      .eq('end_date', ev.end)
       .neq('status', 'cancelled')
+      .lt('start_date', ev.end)
+      .gt('end_date', ev.start)
       .maybeSingle()
 
     if (existing) { skipped++; continue }
 
-    // Skip if overlapping with a confirmed stripe/manual booking
+    // Skip if overlapping with a confirmed manual/stripe booking
     const { data: conflict } = await db
       .from('bookings')
       .select('id')
